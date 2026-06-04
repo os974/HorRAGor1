@@ -14,11 +14,19 @@ from __future__ import annotations
 
 import csv
 import json
+import logging
 
 import polars as pl
 
-from horragor.config.paths import IMDB_HORROR_CLEAN, KAGGLE_CLEAN, TMDB_CLEAN
+from horragor.config.paths import (
+    IMDB_HORROR_CLEAN,
+    KAGGLE_CLEAN,
+    ROTTEN_CLEAN,
+    TMDB_CLEAN,
+)
 from horragor.reconciliation.schema import Film
+
+logger = logging.getLogger(__name__)
 
 # Référentiel des genres de films TMDB (id -> nom). Liste fixe et publique.
 TMDB_GENRE_NAMES: dict[int, str] = {
@@ -167,10 +175,40 @@ def kaggle_films() -> list[Film]:
     return films
 
 
+# --- Rotten Tomatoes --------------------------------------------------------
+def rotten_films() -> list[Film]:
+    """data/clean/rotten_clean.json -> list[Film] (scores RT en échelle native).
+
+    RT n'expose ni tmdb_id ni imdb_id : ces films se rattachent par le fuzzy
+    [titre+année] (N3), exactement comme IMDB. Tolérant au fichier absent : le
+    scraping dépend du réseau et peut légitimement ne pas avoir été lancé.
+    """
+    if not ROTTEN_CLEAN.exists():
+        logger.warning("Rotten Tomatoes non scrapé (%s absent) — source ignorée.", ROTTEN_CLEAN)
+        return []
+    payload = json.loads(ROTTEN_CLEAN.read_text(encoding="utf-8"))
+    films: list[Film] = []
+    for m in payload:
+        films.append(
+            Film(
+                title=m.get("title"),
+                year=_to_int(m.get("year")),
+                rt_tomatometer=_to_int(m.get("tomatometer")),
+                rt_audience=_to_int(m.get("audience")),
+                rt_critics_consensus=m.get("critics_consensus"),
+                genres=m.get("genres") or [],
+                sources=["rotten_tomatoes"],
+            )
+        )
+    return films
+
+
 # --- Agrégation -------------------------------------------------------------
-# Adapters disponibles, dans l'ordre de priorité MDM.
+# Adapters disponibles. L'ordre n'affecte pas la priorité de fusion (gérée par
+# SOURCE_PRIORITY dans merge_films) mais suit la logique MDM par lisibilité.
 ADAPTERS = {
     "tmdb": tmdb_films,
+    "rotten_tomatoes": rotten_films,
     "kaggle": kaggle_films,
     "imdb": imdb_films,
 }

@@ -43,5 +43,9 @@ IMDB_HORROR_CLEAN = CLEAN_DIR / "imdb_horror_clean.csv"
 KAGGLE_RAW = RAW_DIR / "kaggle_raw.csv"
 KAGGLE_CLEAN = CLEAN_DIR / "kaggle_clean.csv"
 
+# --- Rotten Tomatoes --------------------------------------------------------
+ROTTEN_RAW = RAW_DIR / "rotten_raw.json"
+ROTTEN_CLEAN = CLEAN_DIR / "rotten_clean.json"
+
 # --- Gold (dataset final unifié) --------------------------------------------
 GOLD_PARQUET = GOLD_DIR / "horragor_gold.parquet"
