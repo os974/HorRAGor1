@@ -6,19 +6,19 @@ Enchaîne : Extract → Save Raw → Map → Normalize → Save Clean → Load D
 import json
 from pathlib import Path
 
-from config.settings import TMDB_TOKEN
-from db.database import init_db
-from db.seed import seed_genres
-from ingestion.tmdb.tmdb_client import TMDBClient
-from ingestion.tmdb.tmdb_extractor import TMDBExtractor
-from ingestion.tmdb.tmdb_mapper import TMDBMapper
-from pipeline.loader import load_tmdb_normalized
-from pipeline.normalizer import normalize_movie
-from pipeline.saver import save_normalized
+from horragor.config.settings import TMDB_TOKEN
+from horragor.db.database import init_db
+from horragor.db.seed import seed_genres
+from horragor.ingestion.tmdb.tmdb_client import TMDBClient
+from horragor.ingestion.tmdb.tmdb_extractor import TMDBExtractor
+from horragor.ingestion.tmdb.tmdb_mapper import TMDBMapper
+from horragor.pipeline.loader import load_tmdb_normalized
+from horragor.pipeline.normalizer import normalize_movie
+from horragor.pipeline.saver import save_normalized
 
 # Chemin de sauvegarde brute + clean
 # On utilise Path pour être compatible Windows/Linux/Mac
-ROOT = Path(__file__).resolve().parent.parent.parent
+ROOT = Path(__file__).resolve().parents[3]
 RAW_OUTPUT_PATH = ROOT / "data" / "raw" / "tmdb_raw.json"
 CLEAN_OUTPUT_PATH = ROOT / "data" / "clean" / "tmdb_normalized.json"
 

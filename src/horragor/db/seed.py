@@ -2,8 +2,8 @@
 
 from sqlalchemy import select
 
-from db.database import SessionLocal, init_db
-from db.models import Genre
+from horragor.db.database import SessionLocal, init_db
+from horragor.db.models import Genre
 
 GENRES_SEED = [
     (27, "Horror"),

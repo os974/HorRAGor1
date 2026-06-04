@@ -6,9 +6,10 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
-from db.models import Base
+from horragor.db.models import Base
 
-ROOT = Path(__file__).resolve().parent.parent
+# Racine du repo : src/horragor/db/database.py -> parents[3]
+ROOT = Path(__file__).resolve().parents[3]
 DB_PATH = ROOT / "data" / "horragor.db"
 
 # URL : bascule facile vers Supabase en changeant cette variable

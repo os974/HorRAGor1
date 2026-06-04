@@ -1,12 +1,12 @@
 import json
 from pathlib import Path
 
-from config.settings import TMDB_TOKEN
-from ingestion.tmdb.tmdb_client import TMDBClient
-from ingestion.tmdb.tmdb_extractor import TMDBExtractor
-from ingestion.tmdb.tmdb_mapper import TMDBMapper
-from pipeline.normalizer import normalize_movie
-from pipeline.saver import save_normalized
+from horragor.config.settings import TMDB_TOKEN
+from horragor.ingestion.tmdb.tmdb_client import TMDBClient
+from horragor.ingestion.tmdb.tmdb_extractor import TMDBExtractor
+from horragor.ingestion.tmdb.tmdb_mapper import TMDBMapper
+from horragor.pipeline.normalizer import normalize_movie
+from horragor.pipeline.saver import save_normalized
 
 # Chemin de sauvegarde brute
 # On utilise Path pour être compatible Windows/Linux/Mac

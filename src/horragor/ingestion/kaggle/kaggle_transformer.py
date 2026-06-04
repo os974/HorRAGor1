@@ -3,8 +3,8 @@ from pathlib import Path
 
 import polars as pl
 
-from src.ingestion.kaggle.kaggle_extractor import extract
-from src.ingestion.kaggle.kaggle_mapper import map
+from horragor.ingestion.kaggle.kaggle_extractor import extract
+from horragor.ingestion.kaggle.kaggle_mapper import map
 
 logger = logging.getLogger(__name__)
 
