@@ -46,3 +46,10 @@ ROTTEN_HORROR_SLUGS = (
     "talk_to_me_2023",
     "the_substance",
 )
+
+# --- Spark (analyses textuelles lourdes) ------------------------------------
+SPARK_NUM_PARTITIONS = 8  # nb de fichiers splittés (simule un dataset distribué)
+SPARK_KEYWORDS_TOP_K = 10  # mots-clés conservés par film (par poids TF-IDF)
+SPARK_VOCAB_SIZE = 20_000  # taille max du vocabulaire CountVectorizer
+SPARK_MIN_DF = 2  # un terme doit apparaître dans >= 2 films pour compter
+SPARK_MIN_TOKEN_LEN = 3  # ignore les tokens trop courts (bruit)

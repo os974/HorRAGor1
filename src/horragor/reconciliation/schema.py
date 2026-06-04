@@ -62,6 +62,9 @@ class Film:
     collection_name: str | None = None
     status: str | None = None
 
+    # --- Analyses textuelles lourdes (Spark) ---
+    overview_word_count: int | None = None  # nb de mots significatifs du synopsis
+
     # --- Scores (échelles natives, par source) ---
     tmdb_vote_average: float | None = None  # 0-10
     tmdb_vote_count: int | None = None
@@ -73,11 +76,12 @@ class Film:
 
     # --- Listes / provenance ---
     genres: list[str] = field(default_factory=list)
+    keywords: list[str] = field(default_factory=list)  # mots-clés extraits (Spark)
     sources: list[str] = field(default_factory=list)
 
 
 # Champs traités en union de listes lors de la fusion.
-_LIST_FIELDS = {"genres", "sources"}
+_LIST_FIELDS = {"genres", "keywords", "sources"}
 
 
 def _is_empty(value) -> bool:
@@ -104,21 +108,20 @@ def merge_films(partials: list[Film]) -> Film:
     )
 
     merged = Film()
-    seen_genres: list[str] = []
-    seen_sources: list[str] = []
+    # Un bucket d'union dédupliquée (ordre stable) par champ-liste.
+    buckets: dict[str, list[str]] = {name: [] for name in _LIST_FIELDS}
 
     for partial in ordered:
         for f in fields(Film):
             name = f.name
             value = getattr(partial, name)
             if name in _LIST_FIELDS:
-                bucket = seen_genres if name == "genres" else seen_sources
                 for item in value or []:
-                    if item not in bucket:
-                        bucket.append(item)
+                    if item not in buckets[name]:
+                        buckets[name].append(item)
             elif _is_empty(getattr(merged, name)) and not _is_empty(value):
                 setattr(merged, name, value)
 
-    merged.genres = seen_genres
-    merged.sources = seen_sources
+    for name, bucket in buckets.items():
+        setattr(merged, name, bucket)
     return merged

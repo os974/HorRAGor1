@@ -43,10 +43,12 @@ GOLD_SCHEMA: dict[str, pl.DataType] = {
     "tmdb_vote_count": pl.Int64,
     "imdb_average_rating": pl.Float64,
     "imdb_num_votes": pl.Int64,
+    "overview_word_count": pl.Int64,
     "rt_tomatometer": pl.Int64,
     "rt_audience": pl.Int64,
     "rt_critics_consensus": pl.Utf8,
     "genres": pl.List(pl.Utf8),
+    "keywords": pl.List(pl.Utf8),
     "sources": pl.List(pl.Utf8),
 }
 

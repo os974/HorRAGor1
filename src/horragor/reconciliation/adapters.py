@@ -22,6 +22,7 @@ from horragor.config.paths import (
     IMDB_HORROR_CLEAN,
     KAGGLE_CLEAN,
     ROTTEN_CLEAN,
+    SPARK_CLEAN,
     TMDB_CLEAN,
 )
 from horragor.reconciliation.schema import Film
@@ -203,6 +204,31 @@ def rotten_films() -> list[Film]:
     return films
 
 
+# --- Spark (analyses textuelles) --------------------------------------------
+def spark_films() -> list[Film]:
+    """data/clean/spark_clean.parquet -> list[Film] (mots-clés + métriques texte).
+
+    Enrichissement keyé par tmdb_id (issu du `id` Kaggle) : rattachement par
+    matching exact N1. Tolérant au fichier absent (le job Spark peut ne pas
+    avoir été lancé).
+    """
+    if not SPARK_CLEAN.exists():
+        logger.warning("Spark non exécuté (%s absent) — source ignorée.", SPARK_CLEAN)
+        return []
+    df = pl.read_parquet(SPARK_CLEAN)
+    films: list[Film] = []
+    for row in df.iter_rows(named=True):
+        films.append(
+            Film(
+                tmdb_id=_to_int(row.get("tmdb_id")),
+                overview_word_count=_to_int(row.get("overview_word_count")),
+                keywords=list(row.get("keywords") or []),
+                sources=["spark"],
+            )
+        )
+    return films
+
+
 # --- Agrégation -------------------------------------------------------------
 # Adapters disponibles. L'ordre n'affecte pas la priorité de fusion (gérée par
 # SOURCE_PRIORITY dans merge_films) mais suit la logique MDM par lisibilité.
@@ -211,6 +237,7 @@ ADAPTERS = {
     "rotten_tomatoes": rotten_films,
     "kaggle": kaggle_films,
     "imdb": imdb_films,
+    "spark": spark_films,
 }
 
 

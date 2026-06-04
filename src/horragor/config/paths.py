@@ -47,5 +47,9 @@ KAGGLE_CLEAN = CLEAN_DIR / "kaggle_clean.csv"
 ROTTEN_RAW = RAW_DIR / "rotten_raw.json"
 ROTTEN_CLEAN = CLEAN_DIR / "rotten_clean.json"
 
+# --- Spark (big data : fichiers Kaggle splittés) ----------------------------
+SPARK_INPUT_DIR = RAW_DIR / "spark"  # partitions CSV lues en parallèle par Spark
+SPARK_CLEAN = CLEAN_DIR / "spark_clean.parquet"  # enrichissement textuel par film
+
 # --- Gold (dataset final unifié) --------------------------------------------
 GOLD_PARQUET = GOLD_DIR / "horragor_gold.parquet"
