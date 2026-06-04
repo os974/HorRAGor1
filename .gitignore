@@ -11,7 +11,21 @@ wheels/
 
 # Secrets
 .env
+.env.*          # .env.local, .env.prod, etc.
+!.env.example   # Garder le template comme référence
 
 # Data & docs files
 data/
 docs/
+
+# OS
+.DS_Store       # Mac
+Thumbs.db       # Windows
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/

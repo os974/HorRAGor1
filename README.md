@@ -1,7 +1,6 @@
-# Grandes lignes:
-- créer initialiser le projet (répertoires, git, uv)
-- créer un compte et les paramètres API pour tmdb
-- récuperer les données depuis l'api tmdb
+# Cloner le projet sur une autre machine
+Via uv :
+- git clone <repo-horragor>
+- cd horragor
+- uv sync   # crée le venv + installe EXACTEMENT les versions du lock
 
-#“installe” le projet comme package local
-uv pip install -e . 

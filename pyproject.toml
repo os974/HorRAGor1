@@ -1,7 +1,7 @@
 [project]
 name = "horragor"
 version = "0.1.0"
-description = "Add your description here"
+description = "Pipeline RAG pour films d'horreur (TMDB, IMDB, Rotten Tomatoes)"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -10,13 +10,14 @@ dependencies = [
     "pandas>=3.0.2",
     "polars>=1.40.0",
     "psycopg2-binary>=2.9.11",
+    "psycopg[binary]>=3.3.3",
     "pyspark>=4.1.1",
     "pytest>=9.0.3",
     "python-dotenv>=1.2.2",
     "python-levenshtein>=0.27.3",
     "requests>=2.33.1",
     "selenium>=4.43.0",
-    "sqlalchemy>=2.0.49",
+    "sqlalchemy>=2.0",
     "tqdm>=4.67.3",
 ]
 
@@ -26,5 +27,8 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[project.scripts]
-horragor = "cli:main"
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "ruff>=0.15.11",
+]
