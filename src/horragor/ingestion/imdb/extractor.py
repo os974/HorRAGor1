@@ -3,13 +3,14 @@ import logging
 import sqlite3
 from pathlib import Path
 
+from horragor.config.paths import IMDB_DB, IMDB_HORROR_RAW
+from horragor.config.settings import IMDB_MIN_VOTES, IMDB_MIN_YEAR
+
 logger = logging.getLogger(__name__)
 
-IMDB_DB = Path("data/intermediate/imdb.db")
-OUTPUT_CSV = Path("data/intermediate/imdb_horror_raw.csv")
-
-MIN_VOTES = 1000
-MIN_YEAR = 1970
+OUTPUT_CSV = IMDB_HORROR_RAW
+MIN_VOTES = IMDB_MIN_VOTES
+MIN_YEAR = IMDB_MIN_YEAR
 
 
 def extract_horror_movies() -> Path:

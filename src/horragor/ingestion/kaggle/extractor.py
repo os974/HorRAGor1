@@ -1,11 +1,12 @@
 import logging
-from pathlib import Path
 
 import polars as pl
 
+from horragor.config.paths import KAGGLE_RAW
+
 logger = logging.getLogger(__name__)
 
-INPUT_CSV = Path("data/raw/kaggle_raw.csv")
+INPUT_CSV = KAGGLE_RAW
 
 
 def extract() -> pl.DataFrame:

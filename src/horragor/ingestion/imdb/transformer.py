@@ -3,10 +3,12 @@ from pathlib import Path
 
 import pandas as pd
 
+from horragor.config.paths import IMDB_HORROR_CLEAN, IMDB_HORROR_RAW
+
 logger = logging.getLogger(__name__)
 
-INPUT_CSV = Path("data/intermediate/imdb_horror_raw.csv")
-OUTPUT_CSV = Path("data/clean/imdb_horror_clean.csv")
+INPUT_CSV = IMDB_HORROR_RAW
+OUTPUT_CSV = IMDB_HORROR_CLEAN
 
 
 def transform_horror_movies() -> Path:

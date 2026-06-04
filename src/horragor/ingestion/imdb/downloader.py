@@ -9,24 +9,24 @@ import urllib.request
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from horragor.config.paths import IMDB_BASICS_GZ, IMDB_RATINGS_GZ
+from horragor.config.settings import IMDB_BASE_URL, IMDB_MAX_AGE_DAYS
+
 logger = logging.getLogger(__name__)
 
-IMDB_BASE_URL = "https://datasets.imdbws.com/"
-
+# {nom de fichier distant : chemin local cible}
 IMDB_FILES = {
-    "title.basics.tsv.gz": "data/raw/imdb/title.basics.tsv.gz",
-    "title.ratings.tsv.gz": "data/raw/imdb/title.ratings.tsv.gz",
+    "title.basics.tsv.gz": IMDB_BASICS_GZ,
+    "title.ratings.tsv.gz": IMDB_RATINGS_GZ,
 }
-
-MAX_AGE_DAYS = 7
 
 
 def _is_fresh(path: Path) -> bool:
-    """Retourne True si le fichier existe et a moins de MAX_AGE_DAYS jours."""
+    """Retourne True si le fichier existe et a moins de IMDB_MAX_AGE_DAYS jours."""
     if not path.exists():
         return False
     age = datetime.now() - datetime.fromtimestamp(path.stat().st_mtime)
-    return age < timedelta(days=MAX_AGE_DAYS)
+    return age < timedelta(days=IMDB_MAX_AGE_DAYS)
 
 
 def _download_file(filename: str, dest_path: Path) -> None:
@@ -46,8 +46,7 @@ def download_imdb_files(force: bool = False) -> dict[str, Path]:
     """
     paths = {}
 
-    for filename, raw_path_str in IMDB_FILES.items():
-        dest_path = Path(raw_path_str)
+    for filename, dest_path in IMDB_FILES.items():
         dest_path.parent.mkdir(parents=True, exist_ok=True)
 
         if not force and _is_fresh(dest_path):

@@ -1,14 +1,14 @@
 import logging
-from pathlib import Path
 
 import polars as pl
 
+from horragor.config.paths import KAGGLE_CLEAN
 from horragor.ingestion.kaggle.extractor import extract
 from horragor.ingestion.kaggle.mapper import map
 
 logger = logging.getLogger(__name__)
 
-OUTPUT_CSV = Path("data/clean/kaggle_clean.csv")
+OUTPUT_CSV = KAGGLE_CLEAN
 
 
 def transform() -> pl.DataFrame:

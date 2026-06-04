@@ -6,13 +6,14 @@ import logging
 import sqlite3
 from pathlib import Path
 
+from horragor.config.paths import IMDB_BASICS_GZ, IMDB_DB, IMDB_RATINGS_GZ
+from horragor.config.settings import IMDB_BATCH_SIZE
+
 logger = logging.getLogger(__name__)
 
-RAW_BASICS = Path("data/raw/imdb/title.basics.tsv.gz")
-RAW_RATINGS = Path("data/raw/imdb/title.ratings.tsv.gz")
-IMDB_DB = Path("data/intermediate/imdb.db")
-
-BATCH_SIZE = 50_000
+RAW_BASICS = IMDB_BASICS_GZ
+RAW_RATINGS = IMDB_RATINGS_GZ
+BATCH_SIZE = IMDB_BATCH_SIZE
 
 
 def _create_schema(conn: sqlite3.Connection) -> None:

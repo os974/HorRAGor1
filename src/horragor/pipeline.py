@@ -6,7 +6,8 @@ Enchaîne : Extract → Save Raw → Map → Normalize → Save Clean → Load D
 import json
 from pathlib import Path
 
-from horragor.config.settings import TMDB_TOKEN
+from horragor.config.paths import TMDB_CLEAN, TMDB_RAW
+from horragor.config.settings import TMDB_MAX_PAGES, TMDB_TOKEN
 from horragor.db.database import init_db
 from horragor.db.seed import seed_genres
 from horragor.ingestion.tmdb.client import TMDBClient
@@ -16,12 +17,9 @@ from horragor.load.db_loader import load_tmdb_normalized
 from horragor.transform.normalizer import normalize_movie
 from horragor.transform.saver import save_normalized
 
-# Chemin de sauvegarde brute + clean
-# On utilise Path pour être compatible Windows/Linux/Mac
-# src/horragor/pipeline.py -> parents[2] = racine du repo
-ROOT = Path(__file__).resolve().parents[2]
-RAW_OUTPUT_PATH = ROOT / "data" / "raw" / "tmdb_raw.json"
-CLEAN_OUTPUT_PATH = ROOT / "data" / "clean" / "tmdb_normalized.json"
+# Chemins centralisés (cf. horragor.config.paths)
+RAW_OUTPUT_PATH = TMDB_RAW
+CLEAN_OUTPUT_PATH = TMDB_CLEAN
 
 
 def save_raw(data: list[dict], path: Path) -> None:
@@ -42,7 +40,7 @@ def save_raw(data: list[dict], path: Path) -> None:
     print(f"💾 Données brutes sauvegardées → {path}")
 
 
-def run_tmdb_pipeline(max_pages: int = 2) -> list[dict]:
+def run_tmdb_pipeline(max_pages: int = TMDB_MAX_PAGES) -> list[dict]:
     """Extract + Save Raw + Map. Retourne les films mappés."""
     if not TMDB_TOKEN:
         raise RuntimeError("Missing TMDB_TOKEN")
@@ -63,7 +61,7 @@ def run_tmdb_pipeline(max_pages: int = 2) -> list[dict]:
     return mapped_movies
 
 
-def main(max_pages: int = 2) -> None:
+def main(max_pages: int = TMDB_MAX_PAGES) -> None:
     print("🚀 Lancement du pipeline HorRAGor...")
 
     # 0. Préparation de la base (idempotent)
@@ -87,4 +85,4 @@ def main(max_pages: int = 2) -> None:
 
 
 if __name__ == "__main__":
-    main(max_pages=2)
+    main()

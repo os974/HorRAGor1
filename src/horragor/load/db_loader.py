@@ -14,6 +14,7 @@ from typing import Iterable
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from horragor.config.paths import TMDB_CLEAN
 from horragor.db.database import SessionLocal, init_db
 from horragor.db.models import Genre, Movie, MovieGenre, Rating, SourceMetadata
 
@@ -172,9 +173,6 @@ def load_tmdb_normalized(json_path: Path) -> dict:
 #  Point d'entrée CLI
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    ROOT = Path(__file__).resolve().parents[3]
-    JSON_PATH = ROOT / "data" / "clean" / "tmdb_normalized.json"
-
     init_db()  # sécurité : s'assure que les tables existent
-    stats = load_tmdb_normalized(JSON_PATH)
+    stats = load_tmdb_normalized(TMDB_CLEAN)
     print(f"✅ Ingestion terminée : {stats}")

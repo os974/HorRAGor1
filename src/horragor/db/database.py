@@ -1,16 +1,13 @@
 """Configuration de l'engine et factory de sessions SQLAlchemy."""
 
-from pathlib import Path
-
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
+from horragor.config.paths import HORRAGOR_DB
 from horragor.db.models import Base
 
-# Racine du repo : src/horragor/db/database.py -> parents[3]
-ROOT = Path(__file__).resolve().parents[3]
-DB_PATH = ROOT / "data" / "horragor.db"
+DB_PATH = HORRAGOR_DB
 
 # URL : bascule facile vers Supabase en changeant cette variable
 DATABASE_URL = f"sqlite:///{DB_PATH}"
