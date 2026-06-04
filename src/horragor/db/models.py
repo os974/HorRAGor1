@@ -1,6 +1,11 @@
 """
 HorRAGor — Modèles ORM SQLAlchemy 2.0
-Traduction du MPD (db/schema.sql) en classes Python.
+
+Source de vérité du schéma : ces modèles créent les tables via
+`database.init_db()` (Base.metadata.create_all).
+`schema.sql` (même dossier) en est la transcription documentaire (MPD Merise),
+conservée comme référence — elle n'est plus exécutée par le code.
+
 Compatible SQLite (local) et PostgreSQL (Supabase).
 """
 

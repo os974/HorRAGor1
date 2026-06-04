@@ -130,6 +130,6 @@ CREATE INDEX IF NOT EXISTS idx_sources_metadata_movie_id ON sources_metadata(mov
 
 -- =============================================================================
 --  FIN DU MPD
---  Prochaine étape : Traduire ce schéma en classes SQLAlchemy ORM (models.py)
---  puis connecter à Supabase (PostgreSQL) via la même interface ORM.
+--  Référence documentaire (Merise). La création réelle des tables est assurée
+--  par l'ORM SQLAlchemy (db/models.py via database.init_db()), qui fait foi.
 -- =============================================================================
