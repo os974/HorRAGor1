@@ -42,3 +42,6 @@ IMDB_HORROR_CLEAN = CLEAN_DIR / "imdb_horror_clean.csv"
 # --- Kaggle -----------------------------------------------------------------
 KAGGLE_RAW = RAW_DIR / "kaggle_raw.csv"
 KAGGLE_CLEAN = CLEAN_DIR / "kaggle_clean.csv"
+
+# --- Gold (dataset final unifié) --------------------------------------------
+GOLD_PARQUET = GOLD_DIR / "horragor_gold.parquet"
