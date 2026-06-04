@@ -1,5 +1,7 @@
-# src/ingestion/imdb/imdb_downloader.py
-# Mise à jour régulières szur IMDB, relancer le téléchargement si fichiers actuels agées d'au moins 7 jours
+"""Télécharge les dumps IMDB (title.basics / title.ratings).
+
+Relance le téléchargement si les fichiers locaux datent de plus de 7 jours.
+"""
 
 import logging
 import shutil

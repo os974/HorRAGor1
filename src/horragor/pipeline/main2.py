@@ -9,9 +9,9 @@ from pathlib import Path
 from horragor.config.settings import TMDB_TOKEN
 from horragor.db.database import init_db
 from horragor.db.seed import seed_genres
-from horragor.ingestion.tmdb.tmdb_client import TMDBClient
-from horragor.ingestion.tmdb.tmdb_extractor import TMDBExtractor
-from horragor.ingestion.tmdb.tmdb_mapper import TMDBMapper
+from horragor.ingestion.tmdb.client import TMDBClient
+from horragor.ingestion.tmdb.extractor import TMDBExtractor
+from horragor.ingestion.tmdb.mapper import TMDBMapper
 from horragor.pipeline.loader import load_tmdb_normalized
 from horragor.pipeline.normalizer import normalize_movie
 from horragor.pipeline.saver import save_normalized

@@ -1,4 +1,4 @@
-# src/ingestion/imdb/imdb_loader.py
+"""Construit la base SQLite intermédiaire IMDB (TSV.gz -> data/intermediate/imdb.db)."""
 
 import csv
 import gzip
