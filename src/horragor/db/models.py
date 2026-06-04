@@ -15,6 +15,7 @@ from datetime import date, datetime
 from typing import Optional
 
 from sqlalchemy import (
+    BigInteger,
     CheckConstraint,
     DateTime,
     Float,
@@ -72,13 +73,20 @@ class MovieGenre(Base):
 #  TABLE : genres
 # =============================================================================
 class Genre(Base):
-    """Référentiel des genres cinématographiques (source TMDB)."""
+    """
+    Référentiel des genres cinématographiques.
+
+    Keyé par `name` (unique) : le Gold fusionne des genres de plusieurs sources
+    (TMDB, IMDB, Rotten Tomatoes) exprimés en NOMS, dont certains n'ont pas
+    d'id TMDB. `tmdb_genre_id` reste renseigné pour les genres issus de TMDB
+    mais devient optionnel (nullable) pour rester compatible avec ces sources.
+    """
 
     __tablename__ = "genres"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    tmdb_genre_id: Mapped[int] = mapped_column(Integer, nullable=False, unique=True)
-    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    tmdb_genre_id: Mapped[Optional[int]] = mapped_column(Integer, unique=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
 
     # Relation N-N vers Movie via la table d'association
     movies: Mapped[list["Movie"]] = relationship(
@@ -103,10 +111,21 @@ class Movie(Base):
     imdb_id: Mapped[Optional[str]] = mapped_column(String(20), unique=True)
     title: Mapped[str] = mapped_column(String(500), nullable=False)
     original_title: Mapped[Optional[str]] = mapped_column(String(500))
+    original_language: Mapped[Optional[str]] = mapped_column(String(10))
     overview: Mapped[Optional[str]] = mapped_column(Text)
+    tagline: Mapped[Optional[str]] = mapped_column(Text)
     release_date: Mapped[Optional[date]] = mapped_column()
+    runtime_minutes: Mapped[Optional[int]] = mapped_column(Integer)
+    # budget/revenue : BigInteger car certains revenus dépassent 2,1 Md (limite
+    # de l'Integer 32 bits côté PostgreSQL/Supabase).
+    budget: Mapped[Optional[int]] = mapped_column(BigInteger)
+    revenue: Mapped[Optional[int]] = mapped_column(BigInteger)
+    status: Mapped[Optional[str]] = mapped_column(String(50))
+    collection_name: Mapped[Optional[str]] = mapped_column(String(300))
     popularity: Mapped[Optional[float]] = mapped_column(Float)
     poster_path: Mapped[Optional[str]] = mapped_column(String(300))
+    # Enrichissement Spark (analyse textuelle du synopsis).
+    overview_word_count: Mapped[Optional[int]] = mapped_column(Integer)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.current_timestamp()
@@ -123,6 +142,10 @@ class Movie(Base):
         back_populates="movies",
     )
     ratings: Mapped[list["Rating"]] = relationship(
+        back_populates="movie",
+        cascade="all, delete-orphan",
+    )
+    keywords: Mapped[list["MovieKeyword"]] = relationship(
         back_populates="movie",
         cascade="all, delete-orphan",
     )
@@ -160,7 +183,12 @@ class Rating(Base):
         nullable=False,
     )
     source: Mapped[str] = mapped_column(String(50), nullable=False)
+    # score = métrique principale de la source (TMDB/IMDB : note 0-10 ;
+    # Rotten Tomatoes : tomatometer 0-100).
     score: Mapped[Optional[float]] = mapped_column(Float)
+    # audience_score : second score, propre à Rotten Tomatoes (Popcornmeter
+    # 0-100). NULL pour TMDB/IMDB qui n'ont qu'une note.
+    audience_score: Mapped[Optional[float]] = mapped_column(Float)
     vote_count: Mapped[Optional[int]] = mapped_column(Integer)
     critics_consensus: Mapped[Optional[str]] = mapped_column(Text)
 
@@ -178,6 +206,34 @@ class Rating(Base):
 
     def __repr__(self) -> str:
         return f"<Rating(movie_id={self.movie_id}, source='{self.source}', score={self.score})>"
+
+
+# =============================================================================
+#  TABLE : movie_keywords
+# =============================================================================
+class MovieKeyword(Base):
+    """
+    Mots-clés extraits du synopsis par le job Spark (TF-IDF).
+
+    Un mot-clé est un attribut MULTIVALUÉ du film : conformément à la 3NF, on
+    l'extrait dans sa propre table (clé composée movie_id + keyword) plutôt que
+    de le stocker dans une colonne liste/CSV de `movies`.
+    """
+
+    __tablename__ = "movie_keywords"
+
+    movie_id: Mapped[int] = mapped_column(
+        ForeignKey("movies.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    keyword: Mapped[str] = mapped_column(String(100), primary_key=True)
+
+    movie: Mapped["Movie"] = relationship(back_populates="keywords")
+
+    __table_args__ = (Index("idx_movie_keywords_keyword", "keyword"),)
+
+    def __repr__(self) -> str:
+        return f"<MovieKeyword(movie_id={self.movie_id}, keyword='{self.keyword}')>"
 
 
 # =============================================================================
