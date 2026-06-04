@@ -16,7 +16,9 @@ wheels/
 
 # Data & docs files
 data/
-docs/
+docs/*
+# Exception : la doc de modélisation Merise est un livrable -> versionnée
+!docs/merise/
 
 # OS
 .DS_Store       # Mac

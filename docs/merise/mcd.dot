@@ -1,0 +1,26 @@
+graph MCD {
+  rankdir=LR;
+  node [fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=10];
+
+  node [shape=record, style=filled, fillcolor="#cfe2ff", color="#3b6fb0"];
+  FILM    [label="{FILM|tmdb_id\limdb_id\ltitre\ldate_sortie\lbudget\lrecettes\l...\l}"];
+  GENRE   [label="{GENRE|nom\l}"];
+  SOURCE  [label="{SOURCE|code\l}"];
+  MOT_CLE [label="{MOT_CLE|terme\l}"];
+
+  node [shape=diamond, style=filled, fillcolor="#ffe0b3", color="#cc8a2e"];
+  APPARTENIR [label="APPARTENIR"];
+  DECRIRE    [label="DECRIRE"];
+  NOTER      [label="NOTER"];
+  INGERER    [label="INGERER"];
+
+  FILM       -- APPARTENIR [label="1,n"];
+  APPARTENIR -- GENRE      [label="0,n"];
+  FILM       -- DECRIRE    [label="0,n"];
+  DECRIRE    -- MOT_CLE    [label="0,n"];
+  FILM       -- NOTER      [label="0,n"];
+  NOTER      -- SOURCE     [label="1,n"];
+  FILM       -- INGERER    [label="1,n"];
+  INGERER    -- SOURCE     [label="1,n"];
+}
