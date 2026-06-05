@@ -56,6 +56,31 @@ _MOVIE_FIELDS = (
 )
 
 
+def _bulk_insert(session, model, columns: tuple[str, ...], mappings: list[dict]) -> None:
+    """
+    Insertion en masse, optimisée selon le SGBD.
+
+    - **PostgreSQL/Supabase** : `COPY ... FROM STDIN` (psycopg) — streame toutes
+      les lignes en une seule opération. Indispensable sur le réseau : un
+      `executemany` classique fait un aller-retour par lot et met des dizaines
+      de minutes là où COPY prend quelques secondes.
+    - **SQLite** (local) : `executemany` ORM, déjà rapide et COPY indisponible.
+
+    Les colonnes omises (ex. `id` auto-incrément des ratings, `created_at`)
+    prennent leur valeur par défaut côté base.
+    """
+    if not mappings:
+        return
+    if session.bind.dialect.name == "postgresql":
+        sql = f"COPY {model.__tablename__} ({', '.join(columns)}) FROM STDIN"
+        dbapi_conn = session.connection().connection.driver_connection
+        with dbapi_conn.cursor() as cur, cur.copy(sql) as copy:
+            for m in mappings:
+                copy.write_row([m.get(c) for c in columns])
+    else:
+        session.execute(insert(model), mappings)
+
+
 def _parse_date(value: str | None):
     if not value:
         return None
@@ -138,18 +163,17 @@ def load_gold(parquet_path: Path = GOLD_PARQUET) -> dict:
 
     with SessionLocal() as session:
         # Ordre respectant les clés étrangères (parents avant enfants).
-        if genres:
-            session.execute(insert(Genre), genres)
-        if movies:
-            session.execute(insert(Movie), movies)
-        if movie_genres:
-            session.execute(insert(MovieGenre), movie_genres)
-        if keywords:
-            session.execute(insert(MovieKeyword), keywords)
-        if ratings:
-            session.execute(insert(Rating), ratings)
-        if sources:
-            session.execute(insert(SourceMetadata), sources)
+        _bulk_insert(session, Genre, ("id", "name"), genres)
+        _bulk_insert(session, Movie, ("id", "release_date", *_MOVIE_FIELDS), movies)
+        _bulk_insert(session, MovieGenre, ("movie_id", "genre_id"), movie_genres)
+        _bulk_insert(session, MovieKeyword, ("movie_id", "keyword"), keywords)
+        _bulk_insert(
+            session,
+            Rating,
+            ("movie_id", "source", "score", "audience_score", "vote_count", "critics_consensus"),
+            ratings,
+        )
+        _bulk_insert(session, SourceMetadata, ("movie_id", "source_name"), sources)
         session.commit()
 
     stats = {

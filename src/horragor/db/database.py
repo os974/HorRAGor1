@@ -2,12 +2,17 @@
 
 import os
 
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
 from horragor.config.paths import HORRAGOR_DB
 from horragor.db.models import Base
+
+# Charge .env ici aussi : ce module peut être importé sans passer par settings,
+# et il faut que DATABASE_URL soit disponible quel que soit l'ordre d'import.
+load_dotenv()
 
 DB_PATH = HORRAGOR_DB
 
@@ -17,7 +22,9 @@ DB_PATH = HORRAGOR_DB
 _IS_SQLITE = "DATABASE_URL" not in os.environ
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DB_PATH}")
 
-engine = create_engine(DATABASE_URL, echo=False, future=True)
+# pool_pre_ping : revalide la connexion avant usage (le pooler Supabase peut
+# fermer les connexions inactives).
+engine = create_engine(DATABASE_URL, echo=False, future=True, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 
