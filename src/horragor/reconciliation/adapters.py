@@ -97,6 +97,9 @@ def _to_float(value) -> float | None:
 # --- TMDB -------------------------------------------------------------------
 def tmdb_films() -> list[Film]:
     """data/clean/tmdb_normalized.json -> list[Film] (source maîtresse)."""
+    if not TMDB_CLEAN.exists():
+        logger.warning("TMDB non ingéré (%s absent) — source ignorée.", TMDB_CLEAN)
+        return []
     payload = json.loads(TMDB_CLEAN.read_text(encoding="utf-8"))
     films: list[Film] = []
     for m in payload:
@@ -124,6 +127,9 @@ def tmdb_films() -> list[Film]:
 # --- IMDB -------------------------------------------------------------------
 def imdb_films() -> list[Film]:
     """data/clean/imdb_horror_clean.csv -> list[Film] (notes/votes)."""
+    if not IMDB_HORROR_CLEAN.exists():
+        logger.warning("IMDB non ingéré (%s absent) — source ignorée.", IMDB_HORROR_CLEAN)
+        return []
     films: list[Film] = []
     with open(IMDB_HORROR_CLEAN, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
@@ -151,6 +157,9 @@ def kaggle_films() -> list[Film]:
     Le champ `id` du dataset Kaggle est un identifiant TMDB (dataset extrait
     via l'API TMDB) : exploité comme `tmdb_id` pour le matching N1.
     """
+    if not KAGGLE_CLEAN.exists():
+        logger.warning("Kaggle non ingéré (%s absent) — source ignorée.", KAGGLE_CLEAN)
+        return []
     df = pl.read_csv(KAGGLE_CLEAN, infer_schema_length=10000)
     films: list[Film] = []
     for row in df.iter_rows(named=True):
