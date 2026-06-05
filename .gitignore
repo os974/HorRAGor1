@@ -17,9 +17,10 @@ wheels/
 # Data & docs files
 data/
 docs/*
-# Exceptions : livrables à versionner (modélisation Merise + journal de bord)
+# Exceptions : livrables à versionner (modélisation, journal de bord, présentation)
 !docs/merise/
 !docs/logbook.md
+!docs/presentation.md
 
 # OS
 .DS_Store       # Mac
