@@ -21,6 +21,11 @@ dependencies = [
     "tqdm>=4.67.3",
 ]
 
+[project.optional-dependencies]
+# Option du brief P2 : orchestration en DAG via Prefect (extra, installé à la
+# demande pour garder le coeur léger). uv sync --extra orchestration
+orchestration = ["prefect>=3"]
+
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"

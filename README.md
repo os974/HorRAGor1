@@ -27,6 +27,17 @@ python -m horragor --max-pages 3      # profondeur du scan TMDB
 Chaque source est isolée : un échec (réseau, anti-bot…) est journalisé sans
 interrompre le pipeline — la fusion se fait avec les sources qui ont réussi.
 
+### Option : orchestration Prefect (DAG)
+
+Même pipeline orchestré par **Prefect** — extractions **en parallèle**, retries
+automatiques et UI. Réutilise les mêmes étapes ; résultat identique.
+
+```bash
+uv sync --extra orchestration         # installe Prefect (extra optionnel)
+python -m horragor.flow               # DAG : extractions ∥ → fusion → base
+python -m horragor.flow --skip-ingestion --no-load
+```
+
 ## Architecture
 
 `src/horragor/` : `ingestion/` (1 sous-paquet par source) → `transform/` →
