@@ -1,0 +1,47 @@
+erDiagram
+    genres ||--o{ movie_genres : "genre_id"
+    movies ||--o{ movie_genres : "movie_id"
+    movies ||--o{ ratings : "movie_id"
+    movies ||--o{ movie_keywords : "movie_id"
+    movies ||--o{ sources_metadata : "movie_id"
+
+    genres {
+        integer id PK
+        integer tmdb_genre_id UK
+        varchar100 name UK
+    }
+
+    movies {
+        integer id PK
+        integer tmdb_id UK
+        varchar20 imdb_id UK
+        varchar500 title
+        date release_date
+        bigint budget
+        bigint revenue
+    }
+
+    movie_genres {
+        integer movie_id PK,FK
+        integer genre_id PK,FK
+    }
+
+    ratings {
+        integer id PK
+        integer movie_id FK
+        varchar50 source
+        float score
+        float audience_score
+    }
+
+    movie_keywords {
+        integer movie_id PK,FK
+        varchar100 keyword PK
+    }
+
+    sources_metadata {
+        integer id PK
+        integer movie_id FK
+        varchar100 source_name
+        timestamp ingested_at
+    }

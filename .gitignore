@@ -21,6 +21,8 @@ docs/*
 !docs/merise/
 !docs/logbook.md
 !docs/presentation.md
+!docs/livrables.md
+!docs/samples/
 
 # OS
 .DS_Store       # Mac

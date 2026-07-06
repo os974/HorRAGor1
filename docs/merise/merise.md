@@ -7,7 +7,7 @@ selon la méthode **Merise** en trois niveaux :
 |--------|----------|----------|
 | **MCD** — Conceptuel | *Quoi ?* (sens métier) | `mcd.svg` / `mcd.png` |
 | **MLD** — Logique | *Comment, en relationnel ?* | `mld.svg` / `mld.png` + bloc Mermaid ci-dessous |
-| **MPD** — Physique | *Avec quels types/SGBD ?* | `../../src/horragor/db/schema.sql` (+ ORM `db/models.py`) |
+| **MPD** — Physique | *Avec quels types/SGBD ?* | `mpd.svg` / `mpd.png` + `../../src/horragor/db/schema.sql` (+ ORM `db/models.py`) |
 
 ---
 
@@ -119,6 +119,8 @@ erDiagram
 
 ## 3. MPD — Modèle Physique de Données
 
+![MPD](mpd.svg)
+
 Le MPD complet (types SQL, contraintes, index) est le fichier exécutable
 [`src/horragor/db/schema.sql`](../../src/horragor/db/schema.sql), dont l'**ORM
 SQLAlchemy** [`db/models.py`](../../src/horragor/db/models.py) est la source de
@@ -156,11 +158,12 @@ vérité (création via `database.init_db()`). Points physiques notables :
 
 ## Régénérer les diagrammes
 
-Les sources sont versionnées (`mcd.dot`, `mld.mmd`). Rendu en image via
+Les sources sont versionnées (`mcd.dot`, `mld.mmd`, `mpd.mmd`). Rendu en image via
 [Kroki](https://kroki.io) (aucune installation locale requise) :
 
 ```bash
 curl -s -X POST https://kroki.io/graphviz/svg --data-binary @mcd.dot  -o mcd.svg
 curl -s -X POST https://kroki.io/mermaid/svg  --data-binary @mld.mmd  -o mld.svg
+curl -s -X POST https://kroki.io/mermaid/svg  --data-binary @mpd.mmd  -o mpd.svg
 # (remplacer 'svg' par 'png' pour le format image bitmap)
 ```
